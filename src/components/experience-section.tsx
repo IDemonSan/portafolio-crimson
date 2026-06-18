@@ -2,7 +2,6 @@
 
 import { motion } from "framer-motion"
 import { Calendar, CheckCircle, ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
 import type { Experience, Profile } from "@/types"
 import experienceData from "@/data/experience.json"
 import profileData from "@/data/profile.json"

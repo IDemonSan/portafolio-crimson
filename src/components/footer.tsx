@@ -1,6 +1,6 @@
 "use client"
 
-import { Github, Linkedin, Mail, Heart } from "lucide-react"
+import { Github, Linkedin, Mail } from "lucide-react"
 import { usePathname } from "next/navigation"
 import type { Profile } from "@/types"
 import profileData from "@/data/profile.json"
