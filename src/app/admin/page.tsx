@@ -40,7 +40,7 @@ export default function AdminPage() {
   const [githubUser, setGithubUser] = useState<string | null>(null)
   const [repoOwner, setRepoOwner] = useState("")
   const [repoName, setRepoName] = useState("")
-  const [repoBranch, setRepoBranch] = useState("main")
+  const [repoBranch, setRepoBranch] = useState("")
   const [showRepoSettings, setShowRepoSettings] = useState(false)
   const router = useRouter()
 
