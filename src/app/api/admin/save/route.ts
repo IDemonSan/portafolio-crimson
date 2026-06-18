@@ -74,7 +74,7 @@ async function commitToGitHub(
 
   if (!commitRes.ok) {
     const errBody = await commitRes.text()
-    return { ok: false, error: `GitHub API error: ${commitRes.status}` }
+    return { ok: false, error: `GitHub API error ${commitRes.status}: ${errBody.substring(0, 300)}` }
   }
 
   return { ok: true, sha }
@@ -130,26 +130,41 @@ export async function POST(request: Request) {
     }
 
     // Check if running in production (Vercel)
-    const isProduction = process.env.NODE_ENV === "production" || !!process.env.VERCEL
+    // DEBUG: set FORCE_GITHUB_COMMIT=true in .env.local to test GitHub commit locally
+    const isProduction = process.env.NODE_ENV === "production" || !!process.env.VERCEL || process.env.FORCE_GITHUB_COMMIT === "true"
 
     if (isProduction) {
-      // Try to get OAuth token from cookie
-      const cookieStore = await cookies()
-      const oauthToken = cookieStore.get("github_token")?.value
+      let githubToken: string | undefined
+      let hasRepoFromBody: boolean
+      let hasRepoFromEnv: boolean
+      let resolvedOwner: string | undefined
+      let resolvedRepo: string | undefined
+      let resolvedBranch: string
 
-      // Resolve token: OAuth cookie > GITHUB_TOKEN env var
-      const githubToken = oauthToken || process.env.GITHUB_TOKEN
-
-      // Resolve repo: request body > env vars
-      const hasRepoFromBody = !!(repoOwner && repoName)
-      const hasRepoFromEnv = !!(process.env.GITHUB_OWNER && process.env.GITHUB_REPO)
-      const resolvedOwner = repoOwner || process.env.GITHUB_OWNER
-      const resolvedRepo = repoName || process.env.GITHUB_REPO
-      const resolvedBranch = repoBranch || process.env.GITHUB_BRANCH || "main"
+      if (process.env.FORCE_GITHUB_COMMIT === "true" && process.env.NODE_ENV !== "production") {
+        // Local testing: use env vars directly (no OAuth cookie available)
+        githubToken = process.env.GITHUB_TOKEN
+        hasRepoFromBody = !!(repoOwner && repoName)
+        hasRepoFromEnv = !!(process.env.GITHUB_OWNER && process.env.GITHUB_REPO)
+        resolvedOwner = repoOwner || process.env.GITHUB_OWNER
+        resolvedRepo = repoName || process.env.GITHUB_REPO
+        resolvedBranch = repoBranch || process.env.GITHUB_BRANCH || "main"
+      } else {
+        // Production: try OAuth cookie first, then env var
+        const cookieStore = await cookies()
+        const oauthToken = cookieStore.get("github_token")?.value
+        githubToken = oauthToken || process.env.GITHUB_TOKEN
+        hasRepoFromBody = !!(repoOwner && repoName)
+        hasRepoFromEnv = !!(process.env.GITHUB_OWNER && process.env.GITHUB_REPO)
+        resolvedOwner = repoOwner || process.env.GITHUB_OWNER
+        resolvedRepo = repoName || process.env.GITHUB_REPO
+        resolvedBranch = repoBranch || process.env.GITHUB_BRANCH || "main"
+      }
 
       // Need BOTH a token AND repo info to commit
       const hasToken = !!githubToken
       const hasRepo = hasRepoFromBody || hasRepoFromEnv
+      let commitError = ""
 
       if (hasToken && hasRepo) {
         const result = await commitToGitHub(file, content, {
@@ -169,11 +184,12 @@ export async function POST(request: Request) {
           )
         }
 
-        // If commit fails, fallback to downloadable
+        // If commit fails, capture the error for the fallback message
+        commitError = result.error ?? ""
         console.error("GitHub commit failed:", result.error)
       }
 
-      // Fallback: build a helpful error message explaining what's missing
+      // Build error message based on what failed
       let fallbackMessage = ""
       if (!hasToken && !hasRepo) {
         fallbackMessage = "❌ No hay token de GitHub ni datos del repositorio. Conecta tu cuenta GitHub desde el panel admin (botón \"Conectar GitHub\") o configura GITHUB_TOKEN en las variables de entorno."
@@ -181,6 +197,9 @@ export async function POST(request: Request) {
         fallbackMessage = "❌ No hay token de GitHub. Conecta tu cuenta desde el botón \"Conectar GitHub\" en el panel admin, o agrega GITHUB_TOKEN a las variables de entorno."
       } else if (!hasRepo) {
         fallbackMessage = "❌ Faltan datos del repositorio (owner/repo). Configúralos en el panel admin (engranaje ⚙️ junto al nombre de usuario de GitHub) o agrega GITHUB_OWNER y GITHUB_REPO a las variables de entorno."
+      } else if (hasToken && hasRepo && commitError) {
+        // The commit was attempted but failed - include the actual GitHub error
+        fallbackMessage = `❌ GitHub API rechazó el commit: ${commitError}`
       } else {
         fallbackMessage = "❌ Error al conectar con GitHub. Descarga el archivo y haz commit manualmente."
       }
