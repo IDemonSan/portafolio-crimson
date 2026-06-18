@@ -4,7 +4,7 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Briefcase, Building2, Map, Code, Layers, GraduationCap, ChevronDown, ChevronUp } from "lucide-react"
 import { cn } from "@/lib/utils"
-import type { Profile } from "@/types"
+import type { Profile, Metric } from "@/types"
 import profileData from "@/data/profile.json"
 import { useTranslations } from "@/components/language-provider"
 
@@ -54,57 +54,7 @@ function SkillsSection() {
   )
 }
 
-interface Metric {
-  id: string
-  title: string
-  value: string
-  description: string
-  icon: string
-  accent?: "crimson" | "ember"
-  span?: "sm" | "md" | "lg" | "xl"
-}
-
-const metrics: Metric[] = [
-  {
-    id: "exp",
-    title: "Experiencia Técnica",
-    value: "+3 años",
-    description: "Desarrollo profesional en sectores público y privado",
-    icon: "briefcase",
-    accent: "crimson",
-    span: "md",
-  },
-  {
-    id: "sectors",
-    title: "Sectores",
-    value: "2",
-    description: "Gubernamental y Corporativo",
-    icon: "building",
-  },
-  {
-    id: "stack",
-    title: "Stack Completo",
-    value: "Full-Stack",
-    description: "Backend, Frontend y Bases de Datos",
-    icon: "code",
-  },
-  {
-    id: "gis",
-    title: "Especialidad",
-    value: "GIS & Data",
-    description: "Sistemas de Información Geográfica y Analítica",
-    icon: "map",
-    accent: "ember",
-    span: "md",
-  },
-  {
-    id: "arch",
-    title: "Arquitectura",
-    value: "Enterprise",
-    description: "Sistemas escalables orientados al negocio",
-    icon: "layers",
-  },
-]
+const metrics: Metric[] = profile.aboutMetrics || []
 
 const iconMap: Record<string, React.ElementType> = {
   briefcase: Briefcase,
@@ -153,10 +103,20 @@ export function AboutSection() {
               <p className="text-secondary leading-relaxed mb-4">
                 {profile.bio}
               </p>
-              <p className="text-secondary leading-relaxed">
-                Mi filosofía: <em className="text-accent-crimson">&ldquo;2 horas de planificación ahorran 2 semanas de código&rdquo;</em>.
-                Diseño limpio, patrones sólidos y código que otros puedan mantener.
-              </p>
+              {profile.philosophyQuote && (
+                <p className="text-secondary leading-relaxed mb-4">
+                  Mi filosofía:{" "}
+                  <em className="text-accent-crimson">
+                    &ldquo;{profile.philosophyQuote}&rdquo;
+                  </em>
+                  .
+                </p>
+              )}
+              {profile.bioExtra && (
+                <p className="text-secondary leading-relaxed">
+                  {profile.bioExtra}
+                </p>
+              )}
 
               {/* Education */}
               {profile.education.length > 0 && (

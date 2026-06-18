@@ -956,7 +956,7 @@ function ProfileEditor({
           <span className="text-[0.65rem] font-semibold text-accent-crimson uppercase tracking-widest">
             Sobre Mí
           </span>
-          <span className="text-[0.6rem] text-muted">— Bio, ubicación, skills y formación</span>
+          <span className="text-[0.6rem] text-muted">— Bio, filosofía, ubicación, skills y formación</span>
         </div>
         <div className="space-y-4">
           <div>
@@ -967,6 +967,33 @@ function ProfileEditor({
               rows={4}
               className="w-full px-3 py-2 rounded-lg bg-bg-elevated border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30 resize-none"
             />
+          </div>
+
+          <div>
+            <label className="text-xs text-muted block mb-1">Frase de filosofía / lema</label>
+            <input
+              value={form.philosophyQuote || ""}
+              onChange={(e) => update("philosophyQuote", e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-bg-elevated border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30"
+              placeholder="2 horas de planificación ahorran 2 semanas de código"
+            />
+            <p className="text-[0.6rem] text-muted mt-0.5">
+              Se muestra como: Mi filosofía: &ldquo;{form.philosophyQuote || '...'}&rdquo;.
+            </p>
+          </div>
+
+          <div>
+            <label className="text-xs text-muted block mb-1">Bio adicional (segundo párrafo)</label>
+            <textarea
+              value={form.bioExtra || ""}
+              onChange={(e) => update("bioExtra", e.target.value)}
+              rows={2}
+              className="w-full px-3 py-2 rounded-lg bg-bg-elevated border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30 resize-none"
+              placeholder="Diseño limpio, patrones sólidos y código que otros puedan mantener."
+            />
+            <p className="text-[0.6rem] text-muted mt-0.5">
+              Se muestra después de la frase de filosofía.
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
@@ -1024,6 +1051,163 @@ function ProfileEditor({
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* ====== MÉTRICAS / INDICADORES ====== */}
+      <div className="glass-card p-5">
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-theme">
+          <span className="text-[0.65rem] font-semibold text-accent-crimson uppercase tracking-widest">
+            Métricas / Indicadores
+          </span>
+          <span className="text-[0.6rem] text-muted">— Tarjetas de métricas en la sección Sobre Mí</span>
+        </div>
+        <div className="space-y-4">
+          {(form.aboutMetrics || []).map((metric: any, index: number) => (
+            <div
+              key={index}
+              className="p-4 rounded-lg bg-bg-elevated border border-theme"
+            >
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs text-muted font-mono">#{index + 1}</span>
+                <button
+                  onClick={() => {
+                    const updated = [...(form.aboutMetrics || [])]
+                    updated.splice(index, 1)
+                    setForm({ ...form, aboutMetrics: updated })
+                  }}
+                  className="p-1 text-xs text-muted hover:text-accent-crimson"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div className="sm:col-span-2">
+                  <label className="text-[0.6rem] text-muted block mb-0.5">ID (identificador único)</label>
+                  <input
+                    value={metric.id || ""}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], id: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30"
+                    placeholder="exp"
+                  />
+                </div>
+                <div>
+                  <label className="text-[0.6rem] text-muted block mb-0.5">Título</label>
+                  <input
+                    value={metric.title || ""}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], title: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30"
+                    placeholder="Experiencia Técnica"
+                  />
+                </div>
+                <div>
+                  <label className="text-[0.6rem] text-muted block mb-0.5">Valor</label>
+                  <input
+                    value={metric.value || ""}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], value: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30"
+                    placeholder="+3 años"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-[0.6rem] text-muted block mb-0.5">Descripción corta</label>
+                  <input
+                    value={metric.description || ""}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], description: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent-crimson/30"
+                    placeholder="Desarrollo profesional en sectores público y privado"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+                <div>
+                  <label className="text-[0.6rem] text-muted block mb-0.5">Icono</label>
+                  <select
+                    value={metric.icon || "code"}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], icon: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none"
+                  >
+                    <option value="briefcase">Briefcase (maletín)</option>
+                    <option value="building">Building (edificio)</option>
+                    <option value="code">Code (código)</option>
+                    <option value="map">Map (mapa)</option>
+                    <option value="layers">Layers (capas)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[0.6rem] text-muted block mb-0.5">Color de acento</label>
+                  <select
+                    value={metric.accent || "none"}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], accent: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none"
+                  >
+                    <option value="none">Ninguno</option>
+                    <option value="crimson">Crimson (rojo)</option>
+                    <option value="ember">Ember (ámbar)</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-[0.6rem] text-muted block mb-0.5">Span (columnas)</label>
+                  <select
+                    value={metric.span || "sm"}
+                    onChange={(e) => {
+                      const updated = [...(form.aboutMetrics || [])]
+                      updated[index] = { ...updated[index], span: e.target.value }
+                      setForm({ ...form, aboutMetrics: updated })
+                    }}
+                    className="w-full px-2.5 py-1.5 rounded-lg bg-bg-card border-border text-primary text-sm focus:outline-none"
+                  >
+                    <option value="sm">1 columna</option>
+                    <option value="md">2 columnas</option>
+                    <option value="lg">3 columnas</option>
+                    <option value="xl">4 columnas</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          ))}
+          <button
+            onClick={() => {
+              const updated = [...(form.aboutMetrics || [])]
+              updated.push({
+                id: `metric-${Date.now()}`,
+                title: "Nueva Métrica",
+                value: "Valor",
+                description: "Descripción",
+                icon: "code",
+                accent: "none",
+                span: "sm",
+              })
+              setForm({ ...form, aboutMetrics: updated })
+            }}
+            className="text-xs text-accent-crimson hover:bg-accent-crimson-subtle px-3 py-1.5 rounded-lg transition-colors"
+          >
+            + Agregar métrica
+          </button>
         </div>
       </div>
 

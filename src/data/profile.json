@@ -5,6 +5,8 @@
   "tagline": "Código limpio, soluciones reales.",
   "subtitle": "Titulado por SENATI · RNP Activo para Consultorías del Estado Peruano",
   "bio": "Desarrollador de Software con formación técnica sólida y experiencia en el desarrollo de aplicaciones web empresariales. Apasionado por la automatización de procesos, el modelado de datos y la construcción de sistemas escalables. Combino la disciplina del desarrollo con la constancia del Muay Thai para entregar código confiable y bien estructurado.",
+  "bioExtra": "Diseño limpio, patrones sólidos y código que otros puedan mantener. Cada línea importa, cada abstracción tiene un propósito. Construyo pensando en el equipo que vendrá después.",
+  "philosophyQuote": "2 horas de planificación ahorran 2 semanas de código",
   "location": "Lima, Perú",
   "email": "brandonmikehuertaneyra@gmail.com",
   "phone": "903054704",
@@ -60,5 +62,52 @@
     }
   ],
   "resumeUrl": "/cv-brandon-huerta.txt",
-  "headerImage": "/IDemonSan-Logo.svg"
+  "headerImage": "/IDemonSan-Logo.svg",
+  "aboutMetrics": [
+    {
+      "id": "exp",
+      "title": "Experiencia Técnica",
+      "value": "+3 años",
+      "description": "Desarrollo profesional en sectores público y privado",
+      "icon": "briefcase",
+      "accent": "crimson",
+      "span": "md"
+    },
+    {
+      "id": "sectors",
+      "title": "Sectores",
+      "value": "2",
+      "description": "Gubernamental y Corporativo",
+      "icon": "building",
+      "accent": "none",
+      "span": "sm"
+    },
+    {
+      "id": "stack",
+      "title": "Stack Completo",
+      "value": "Full-Stack",
+      "description": "Backend, Frontend y Bases de Datos",
+      "icon": "code",
+      "accent": "none",
+      "span": "sm"
+    },
+    {
+      "id": "gis",
+      "title": "Especialidad",
+      "value": "GIS & Data",
+      "description": "Sistemas de Información Geográfica y Analítica",
+      "icon": "map",
+      "accent": "ember",
+      "span": "md"
+    },
+    {
+      "id": "arch",
+      "title": "Arquitectura",
+      "value": "Enterprise",
+      "description": "Sistemas escalables orientados al negocio",
+      "icon": "layers",
+      "accent": "none",
+      "span": "sm"
+    }
+  ]
 }

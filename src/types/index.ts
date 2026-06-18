@@ -1,10 +1,28 @@
+export interface Metric {
+  id: string
+  title: string
+  value: string
+  description: string
+  /** Icon identifier: briefcase, building, code, map, layers */
+  icon: string
+  accent?: "crimson" | "ember" | "none"
+  span?: "sm" | "md" | "lg" | "xl"
+}
+
 export interface Profile {
   name: string
   initials: string
   title: string
   tagline: string
   subtitle: string
+  /** Primary bio paragraph (shown first in About section) */
   bio: string
+  /** Optional secondary bio paragraph (shown after philosophy quote) */
+  bioExtra?: string
+  /** Optional philosophy/motto quote displayed between bio paragraphs */
+  philosophyQuote?: string
+  /** Grid of metric cards displayed in About section */
+  aboutMetrics?: Metric[]
   location: string
   email: string
   phone: string
