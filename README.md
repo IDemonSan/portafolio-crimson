@@ -88,15 +88,17 @@ git push -u origin main
 
 **Variables de entorno requeridas en Vercel:**
 
-| Variable | Obligatoria | Descripción |
+| Variable | ¿Obligatoria? | ¿Para qué? |
 |---|---|---|
-| `ADMIN_SECRET` | ✅ Sí | Contraseña del panel admin |
-| `GITHUB_CLIENT_ID` | ❌ No (para OAuth) | Client ID de GitHub OAuth App |
-| `GITHUB_CLIENT_SECRET` | ❌ No (para OAuth) | Client Secret de GitHub OAuth App |
-| `GITHUB_TOKEN` | ❌ No (alternativa) | Personal Access Token con scope `repo` |
-| `GITHUB_OWNER` | ❌ No | Dueño del repositorio (usuario u organización) |
-| `GITHUB_REPO` | ❌ No | Nombre del repositorio |
-| `GITHUB_BRANCH` | ❌ No | Rama (default: `main`) |
+| `ADMIN_SECRET` | ✅ **Siempre** | Contraseña del panel `/admin` — sin esto no puedes ni iniciar sesión |
+| `GITHUB_CLIENT_ID` | ⚠️ Con OAuth | Client ID de tu GitHub OAuth App |
+| `GITHUB_CLIENT_SECRET` | ⚠️ Con OAuth | Client Secret de tu GitHub OAuth App |
+| `GITHUB_TOKEN` | ⚠️ Con PAT | Personal Access Token clásico con scope `repo` |
+| `GITHUB_OWNER` | ✅ **Con auto-commit** | Tu usuario de GitHub (ej: `IDemonSan`) |
+| `GITHUB_REPO` | ✅ **Con auto-commit** | Nombre del repositorio (ej: `mi-portafolio`) |
+| `GITHUB_BRANCH` | ⚠️ Recomendada | Rama del repo (default: `main`). **Si tu repo usa `master`, debes configurarlo** |
+
+> **Resumen:** Para que el auto-commit funcione, necesitas SIEMPRE `GITHUB_OWNER` y `GITHUB_REPO`. Luego escoges: OAuth (`GITHUB_CLIENT_ID` + `GITHUB_CLIENT_SECRET`) o PAT (`GITHUB_TOKEN`). `GITHUB_BRANCH` es necesaria si tu rama no se llama `main`.
 
 ---
 
@@ -129,56 +131,91 @@ Hay dos mecanismos:
 
 Cuando guardas cambios desde el admin en producción, el backend intenta hacer commit y push automáticos al repositorio de GitHub usando **la API de GitHub**.
 
-### Opción 1: OAuth (recomendado para uso interactivo)
+### Opción 1: OAuth de GitHub + env vars (recomendada)
 
-El panel admin tiene un botón **"Conectar GitHub"** que inicia el flujo OAuth:
+Usa el botón **"Conectar GitHub"** en el panel admin para autenticarte con tu cuenta.  
+El token se almacena en una cookie httpOnly y funciona por 7 días.
 
-1. Te redirige a GitHub para autorizar la aplicación
-2. GitHub te pide confirmar los permisos (solo `repo` — escritura en repositorios)
-3. Una vez autorizado, recibes un token que se almacena en una **cookie httpOnly** (7 días)
-4. Cada vez que guardas, el backend usa ese token para hacer commit via GitHub API
+**Variables necesarias (las 4):**
 
-**Para configurar OAuth:**
+| Variable | Valor ejemplo |
+|---|---|
+| `GITHUB_CLIENT_ID` | `Iv1.xxxxxxxxxxxx` (de tu OAuth App) |
+| `GITHUB_CLIENT_SECRET` | `xxxxxxxxxxxxxxxx` (de tu OAuth App) |
+| `GITHUB_OWNER` | `IDemonSan` (tu usuario de GitHub) |
+| `GITHUB_REPO` | `mi-portafolio` (nombre del repo) |
+| `GITHUB_BRANCH` | `master` (solo si tu rama no es `main`) |
 
-1. Ve a [GitHub Settings → Developer settings → OAuth Apps](https://github.com/settings/developers) → **New OAuth App**
+**Para crear la OAuth App:**
+
+1. [GitHub Settings → Developer settings → OAuth Apps](https://github.com/settings/developers) → **New OAuth App**
 2. **Homepage URL:** `https://tu-dominio.com`
 3. **Authorization callback URL:** `https://tu-dominio.com/api/admin/github/callback`
 4. Copia el **Client ID** y genera un **Client Secret**
-5. Configúralos como `GITHUB_CLIENT_ID` y `GITHUB_CLIENT_SECRET` en Vercel
 
-#### ¿Qué permisos tiene el token?
+Luego en el admin:
+1. Haz clic en **"Conectar GitHub"** → autoriza la app
+2. Verás tu nombre de usuario en el header ✅
+3. ¡Listo! Al guardar, el commit se hace automáticamente
+
+> ⚠️ **IMPORTANTE:** `GITHUB_OWNER` y `GITHUB_REPO` son **obligatorios** incluso con OAuth.  
+> El OAuth solo provee el token de escritura, pero el backend necesita saber en qué repo escribir.
+
+#### ¿Qué permisos tiene el token OAuth?
 
 El scope solicitado es `repo`, que permite:
-- ✅ Leer y escribir el contenido de repositorios públicos y privados
-- ✅ Crear commits, actualizar archivos, crear branches
-- ❌ No tiene acceso a administración de repositorios, settings, ni otros recursos
+- ✅ Leer y escribir contenido de repositorios públicos y privados
+- ✅ Crear commits y actualizar archivos
+- ❌ No tiene acceso a settings del repo, usuarios, ni otros recursos de GitHub
 
-### Opción 2: Personal Access Token (más simple)
+---
 
-Si prefieres no usar OAuth, puedes crear un **Personal Access Token (PAT)** clásico:
+### Opción 2: Personal Access Token (sin OAuth)
 
-1. Ve a [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
-2. Genera un token con scope `repo`
-3. Configura las variables de entorno:
-   - `GITHUB_TOKEN=ghp_tu-token`
-   - `GITHUB_OWNER=tu-usuario`
-   - `GITHUB_REPO=nombre-del-repo`
-   - `GITHUB_BRANCH=main` (opcional, default `main`)
+Si prefieres no usar el flujo OAuth, crea un **Personal Access Token clásico** con scope `repo`.
 
-Con esto, el admin puede hacer commits sin necesidad del flujo OAuth desde el navegador.
+**Variables necesarias (las 4):**
 
-### Opción 3: Mixta (la más segura en producción)
+| Variable | Valor ejemplo |
+|---|---|
+| `GITHUB_TOKEN` | `ghp_xxxxxxxxxxxxxxxxxxxx` |
+| `GITHUB_OWNER` | `IDemonSan` |
+| `GITHUB_REPO` | `mi-portafolio` |
+| `GITHUB_BRANCH` | `master` (solo si tu rama no es `main`) |
 
-Usa OAuth para la autenticación (el usuario se autentica con su cuenta de GitHub) y configura el owner/repo/branch desde el panel admin (se guarda en sessionStorage del navegador).
+**Para crear el token:**
 
-De esta forma:
-- ✅ El token OAuth expira después de 7 días (el usuario tiene que reconectar)
-- ✅ El token PAT (si usas) es un secreto de servidor, nunca expuesto al frontend
-- ✅ Cada commit queda registrado con la identidad del usuario que autorizó
+1. [GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)](https://github.com/settings/tokens)
+2. **Generate new token (classic)** → scope `repo` → **Generate**
+3. Copia el token (empieza con `ghp_`)
+
+Con estas 4 variables configuradas, el admin hará commits automáticos sin necesidad de conectar OAuth desde el navegador.
+
+> ⚠️ A diferencia de OAuth, este token **no expira** (a menos que le pongas expiry). Si se filtra, alguien podría escribir en tu repo.  
+> Se recomienda solo para entornos controlados o como plan de respaldo.
+
+---
+
+### Opción 3: Solo OAuth (sin GITHUB_OWNER/GITHUB_REPO en env vars)
+
+No necesitas `GITHUB_OWNER` ni `GITHUB_REPO` como variables de entorno si los configuras **desde el panel admin**:
+
+1. Conecta GitHub vía OAuth (necesitas `GITHUB_CLIENT_ID` y `GITHUB_CLIENT_SECRET`)
+2. Haz clic en el **engranaje ⚙️** junto a tu nombre de usuario
+3. Completa: **Owner**, **Repositorio** y **Rama** (`master`, `main`, etc.)
+4. Guarda configuración
+
+**Ventaja:** No necesitas tocar las variables de entorno para el repo.  
+**Desventaja:** La configuración se guarda en `sessionStorage` del navegador (se pierde al cerrar la pestaña).  
+**Recomendación:** Siempre es mejor tener `GITHUB_OWNER` y `GITHUB_REPO` como env vars en Vercel.
+
+---
 
 ### ¿Qué pasa si no configuro GitHub?
 
-Si no hay OAuth ni token configurado, el admin en producción **descargará el archivo JSON modificado** para que puedas hacer commit manualmente. El portafolio sigue funcionando perfectamente — solo pierdes la comodidad del auto-commit.
+Sin OAuth, sin token y sin repo configurado, el panel admin en producción **descargará el archivo JSON modificado** para que puedas hacer commit manualmente. El portafolio sigue funcionando perfectamente — solo pierdes la comodidad del auto-commit.
+
+En desarrollo local, siempre escribe directo al filesystem sin necesidad de GitHub.
 
 ### Diagrama del flujo OAuth
 
