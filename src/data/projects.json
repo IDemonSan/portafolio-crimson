@@ -5,11 +5,19 @@
     "description": "App móvil para la gestión de cuentas y control de fotocopias, diseñada específicamente para el negocio familiar pero con secciones genéricas para adaptación por otros usuarios.",
     "problem": "Mi mamá llevaba las cuentas de su centro de fotocopiado manualmente en papel, generando errores, pérdida de información y dificultad para saber quién debía o cuánto se había vendido.",
     "solution": "Una app React Native con sistema de créditos, registro de ventas, historial de pagos y control de inventario. Diseñé la arquitectura pensando en que otras personas pudieran adaptarla a sus propios negocios.",
-    "technologies": ["React Native", "TypeScript", "AsyncStorage", "React Navigation"],
+    "technologies": [
+      "React Native",
+      "TypeScript",
+      "AsyncStorage",
+      "React Navigation"
+    ],
     "links": {
       "github": "https://github.com/IDemonSan/pos-copycenter"
     },
-    "badges": ["React Native", "Producción"],
+    "badges": [
+      "React Native",
+      "Producción"
+    ],
     "featured": true
   },
   {
@@ -18,12 +26,22 @@
     "description": "Plataforma GIS para inmobiliarias que digitaliza lotizaciones y automatiza el control de disponibilidad territorial en tiempo real. Actualmente en fase MVP.",
     "problem": "Las inmobiliarias gestionan lotizaciones manualmente, generando errores en disponibilidad, dobles ventas y pérdida de oportunidades por falta de información en tiempo real.",
     "solution": "Sistema centralizado con mapa interactivo que sincroniza el estado de los lotes, genera reportes automáticos de disponibilidad y permite la gestión colaborativa del equipo de ventas.",
-    "technologies": ["React", "Spring Boot", "PostgreSQL", "PostGIS", "Docker", "Leaflet"],
+    "technologies": [
+      "React",
+      "Spring Boot",
+      "PostgreSQL",
+      "PostGIS",
+      "Docker",
+      "Leaflet"
+    ],
     "links": {
       "github": "#",
       "demo": "#"
     },
-    "badges": ["En Desarrollo", "GIS"],
+    "badges": [
+      "En Desarrollo",
+      "GIS"
+    ],
     "featured": true
   },
   {
@@ -32,11 +50,18 @@
     "description": "Aplicación Android nativa en Java que convierte archivos PDF a imágenes JPG página por página, con interfaz simple y almacenamiento local.",
     "problem": "Necesitaba extraer imágenes de documentos PDF de forma rápida sin depender de servicios web ni conexión a internet.",
     "solution": "App Android ligera que usa la API de Android para renderizar PDFs y convertirlos a imágenes de alta calidad, almacenándolas localmente en el dispositivo.",
-    "technologies": ["Java", "Android SDK", "PDF API"],
+    "technologies": [
+      "Java",
+      "Android SDK",
+      "PDF API"
+    ],
     "links": {
       "github": "https://github.com/IDemonSan"
     },
-    "badges": ["Android", "Java"],
+    "badges": [
+      "Android",
+      "Java"
+    ],
     "featured": true
   },
   {
@@ -45,8 +70,17 @@
     "description": "Propuesta arquitectónica para un sistema enterprise que unifica historiales clínicos entre instituciones de salud, resolviendo la fragmentación de información médica.",
     "problem": "La información médica fragmentada entre distintos sistemas hospitalarios dificulta la atención continua del paciente y genera riesgos en la toma de decisiones clínicas.",
     "solution": "Arquitectura de microservicios con APIs estandarizadas que centraliza historiales clínicos y permite el intercambio seguro de información entre instituciones, basada en principios de interoperabilidad.",
-    "technologies": ["Angular", "NestJS", "TypeScript", "PostgreSQL", "Cloudflare"],
-    "badges": ["Arquitectura", "Conceptual"],
+    "technologies": [
+      "Angular",
+      "NestJS",
+      "TypeScript",
+      "PostgreSQL",
+      "Cloudflare"
+    ],
+    "badges": [
+      "Arquitectura",
+      "Conceptual"
+    ],
     "featured": false
   },
   {
@@ -55,8 +89,18 @@
     "description": "Plataforma conceptual de analítica territorial que procesa datasets policiales, estandariza direcciones y habilita análisis geoespacial para prevención del delito.",
     "problem": "Los datasets policiales contienen direcciones inconsistentes y errores de geolocalización, limitando la capacidad de análisis espacial para estrategias de prevención.",
     "solution": "Motor de geocodificación con validación espacial que limpia y estandariza direcciones, corrige coordenadas geográficas y permite visualizar patrones delictivos en mapas interactivos.",
-    "technologies": ["React", "FastAPI", "PostgreSQL", "PostGIS", "Leaflet", "Python"],
-    "badges": ["GIS", "Conceptual"],
+    "technologies": [
+      "React",
+      "FastAPI",
+      "PostgreSQL",
+      "PostGIS",
+      "Leaflet",
+      "Python"
+    ],
+    "badges": [
+      "GIS",
+      "Conceptual"
+    ],
     "featured": false
   }
 ]
